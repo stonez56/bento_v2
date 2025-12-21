@@ -1,0 +1,5 @@
+{
+  "name": "辦公室訂餐系統2",
+  "description": "一個專為辦公室設計的週點餐系統，取代 Excel 手動統計，自動計算金額與餐點數量。",
+  "requestFramePermissions": []
+}
