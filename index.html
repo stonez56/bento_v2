@@ -4,53 +4,73 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>辦公室訂餐系統</title>
+    <title>Smart Bento - 辦公室訂餐系統</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
+      :root {
+        --primary: #6366f1;
+        --primary-vivid: #4f46e5;
+      }
       body {
-        font-family: 'Noto+Sans+TC', sans-serif;
-        background-color: #f3f4f9;
+        font-family: 'Plus Jakarta Sans', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+        background-color: #f0f4f8;
+        color: #1e293b;
+        -webkit-font-smoothing: antialiased;
       }
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+      
+      /* 確保 Emoji 正常顯示 */
+      .emoji-font {
+        font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
       }
-      ::-webkit-scrollbar-track {
-        background: #f1f1f1;
+
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid #f0f4f8; }
+      ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+      
+      .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 1);
       }
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
+
+      .vivid-shadow {
+        box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.1), 0 8px 10px -6px rgba(79, 70, 229, 0.05);
       }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
+
+      @keyframes slideUp { 
+        from { opacity: 0; transform: translateY(12px); } 
+        to { opacity: 1; transform: translateY(0); } 
       }
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-      .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+      .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+      /* 表格標題固定樣式 */
+      .sticky-header th {
+        position: sticky;
+        top: 0;
+        z-index: 30;
       }
     </style>
+
   <script type="importmap">
 {
   "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
+    "firebase/": "https://esm.sh/firebase@^12.7.0/",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
-    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
-    "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
-    "firebase/": "https://esm.sh/firebase@^12.7.0/"
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
   }
 }
 </script>
 </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
