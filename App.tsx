@@ -328,7 +328,7 @@ export default function App() {
               const items = dailySummary[wd.dateStr] || {};
               const dayTotal = Object.entries(items).reduce((acc, [id, qty]) => {
                 const item = menuItems.find(m => m.id === id);
-                return acc + (item ? item.price * qty : 0);
+                return acc + (item ? item.price * (qty as number) : 0);
               }, 0);
               return (
                 <div key={wd.dateStr} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
@@ -364,25 +364,76 @@ export default function App() {
           </div>
         )}
 
-        {/* Wallet/Manage Tab - Compact Grid */}
+        {/* Wallet/Manage Tab - Enhanced with Order Deduction */}
         {activeTab === 'manage' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-slide-up">
-            {users.map(user => (
-              <div key={user.userName} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center group hover:border-indigo-300 transition-all">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400"><User size={24}/></div>
-                  <div>
-                    <h3 className="text-lg font-black text-slate-800 leading-tight">{user.userName}</h3>
-                    <div className="text-sm font-bold text-slate-500">
-                       <span className={`${user.balance >= 0 ? 'text-emerald-600' : 'text-rose-600'} tabular-nums`}>${user.balance}</span>
+            {users.map(user => {
+              // Calculate weekly order total for this user
+              const weeklyOrderTotal = weekDates.reduce((total, wd) => {
+                const dayOrder = user.selections[wd.dateStr] || {};
+                Object.entries(dayOrder).forEach(([itemId, qty]) => {
+                  const item = menuItems.find(m => m.id === itemId);
+                  if (item) total += item.price * (qty as number);
+                });
+                return total;
+              }, 0);
+              
+              // Calculate net balance
+              const netBalance = user.balance - weeklyOrderTotal;
+              
+              return (
+                <div key={user.userName} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-violet-100 rounded-full flex items-center justify-center text-indigo-600">
+                        <User size={24}/>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-black text-slate-800 leading-tight">{user.userName}</h3>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => { setPendingAmount(0); setDepositMode('add'); setDepositModal({ userName: user.userName }); }} 
+                      className="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg font-bold text-xs hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-1"
+                    >
+                      <Banknote size={14}/> 儲值
+                    </button>
+                  </div>
+                  
+                  {/* Financial Summary Cards */}
+                  <div className="space-y-2">
+                    {/* Deposit Amount */}
+                    <div className="flex justify-between items-center p-2.5 bg-emerald-50 rounded-lg border border-emerald-100">
+                      <div className="flex items-center gap-2">
+                        <PlusCircle size={16} className="text-emerald-500"/>
+                        <span className="text-xs font-bold text-emerald-700">儲值金額</span>
+                      </div>
+                      <span className="text-sm font-black text-emerald-600 tabular-nums">${user.balance}</span>
+                    </div>
+                    
+                    {/* Weekly Orders */}
+                    <div className="flex justify-between items-center p-2.5 bg-orange-50 rounded-lg border border-orange-100">
+                      <div className="flex items-center gap-2">
+                        <MinusCircle size={16} className="text-orange-500"/>
+                        <span className="text-xs font-bold text-orange-700">本週點餐</span>
+                      </div>
+                      <span className="text-sm font-black text-orange-600 tabular-nums">${weeklyOrderTotal}</span>
+                    </div>
+                    
+                    {/* Net Balance */}
+                    <div className={`flex justify-between items-center p-2.5 rounded-lg border-2 ${netBalance >= 0 ? 'bg-indigo-50 border-indigo-200' : 'bg-rose-50 border-rose-200'}`}>
+                      <div className="flex items-center gap-2">
+                        <Equal size={16} className={netBalance >= 0 ? 'text-indigo-600' : 'text-rose-600'}/>
+                        <span className={`text-xs font-bold ${netBalance >= 0 ? 'text-indigo-700' : 'text-rose-700'}`}>實際餘額</span>
+                      </div>
+                      <span className={`text-base font-black tabular-nums ${netBalance >= 0 ? 'text-indigo-700' : 'text-rose-700'}`}>
+                        ${netBalance}
+                      </span>
                     </div>
                   </div>
                 </div>
-                <button onClick={() => { setPendingAmount(0); setDepositMode('add'); setDepositModal({ userName: user.userName }); }} className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg font-bold text-xs hover:bg-indigo-600 hover:text-white transition-all">
-                  儲值
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
